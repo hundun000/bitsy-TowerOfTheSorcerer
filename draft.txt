@@ -11,7 +11,7 @@ NAME blueprint
 255,255,255
 
 ROOM floor_1
-0,0,0,0,0,0,0,0,0,0,0,0,0,t_info_HP_2,t_info_HP_1,t_info_HP_0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 0,a,a,a,a,a,a,a,a,a,a,a,a,a,a,0
 0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
 0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
@@ -41,39 +41,6 @@ TIL a
 11111111
 NAME block
 
-TIL til_info_HP_0 
-00000000
-00010000
-00001000
-01010100
-00101010
-00010000
-00001000
-00000000
-NAME t_info_HP_0
-
-TIL til_info_HP_1 
-00000000
-00010000
-00001000
-01010100
-00101010
-00010000
-00001000
-00000000
-NAME t_info_HP_1
-
-TIL til_info_HP_2
-00000000
-00010000
-00001000
-01010100
-00101010
-00010000
-00001000
-00000000
-NAME t_info_HP_2
-
 SPR A
 00011000
 00011000
@@ -94,7 +61,7 @@ SPR spr_slime_1_5_5
 01111100
 00111100
 00100100
-NAME cat
+NAME spr_slime_1_5_5
 DLG dlg_slime_1_5_5_intoBattle_part1
 POS floor_1 5,5
 
@@ -107,18 +74,18 @@ ITM icon_HP
 00011000
 00000000
 00000000
-NAME HP
+NAME icon_HP
 
 ITM icon_ATK
 00000000
-00001000
 00011000
-00101000
-00101000
-00101000
-01111100
-00010000
-NAME ATK
+00100100
+00100100
+00100100
+00100100
+01111110
+00011000
+NAME icon_ATK
 
 ITM icon_DEF
 00000000
@@ -129,83 +96,143 @@ ITM icon_DEF
 00100100
 00011000
 00000000
-NAME DEF
-
-ITM icon_slime
-00000000
-00000000
-01010001
-01110001
-01110010
-01111100
-00111100
-00100100
-NAME slime
+NAME icon_DEF
 
 ITM icon_money
-00111100
+00010000
+00111000
+01000100
+00110000
+00011000
+01000100
+00111000
+00010000
+NAME icon_money
+
+ITM item_healBottle
+01100110
+00100100
+00100100
 01000010
-10011001
-10100101
-10100101
-10011001
 01000010
-00111100
-NAME money
+01000010
+01111110
+01111110
+NAME item_healBottle
+DLG dlg_healBottle
+
+ITM item_ATKGem
+00010000
+00101000
+01000100
+10100010
+10000010
+01000100
+00101000
+00010000
+NAME item_ATKGem
+DLG dlg_ATKGem
+
+ITM item_DEFGem
+00000000
+01111100
+10000010
+10100010
+10000010
+10000010
+10000010
+01111100
+NAME DEFGem
+DLG dlg_DEFGem
+
+DLG dlg_healBottle
+"""
+{let_enhance_before = member_player_HP}
+{member_player_HP = member_player_HP + prototype_healBottle_amount}
+Heal: {printItem "icon_HP"} {print let_enhance_before} -> {print member_player_HP}
+"""
+NAME healBottle
+
+DLG dlg_ATKGem
+"""
+{let_enhance_before = member_player_ATK}
+{member_player_ATK = member_player_ATK + prototype_ATKGem_amount}
+Enhance: {printItem "icon_ATK"} {print let_enhance_before} -> {print member_player_ATK}
+"""
+NAME ATKGem
+
+DLG item_DEFGem
+"""
+{let_enhance_before = member_player_ATK}
+{member_player_ATK = member_player_ATK + prototype_ATKGem_amount}
+Enhance: {printItem "icon_ATK"} {print let_enhance_before} -> {print member_player_ATK}
+"""
+NAME item_DEFGem
 
 DLG dlg_slime_1_5_5_intoBattle_part1
 """
-{pointer_currentEmenySprId = spr_slime_1_5_5}
-(jumpNow "fun_slime_intoBattle")
+(jumpNow "fun_slime_intoBattle")(jump "dlg_slime_1_5_5_intoBattle_part2")
 """
 NAME dlg_slime_1_5_5_intoBattle_part1
 
+DLG dlg_slime_1_5_5_intoBattle_part2
+"""
+{
+  - arg_checkComfirmBattle_comfirmed == 1 ?
+    {eraseAll "SPR, spr_slime_1_5_5, floor_1"}
+}
+"""
+NAME dlg_slime_1_5_5_intoBattle_part2
+
 DLG fun_calculateBattle
 """
-{printItem "icon_HP"} {print arg_calculateBattle_ememyHP}, {printItem "icon_ATK"} {print arg_calculateBattle_ememyATK}, {printItem "icon_DEF"} {print arg_calculateBattle_ememyDEF}, {printItem "icon_money"} {print arg_calculateBattle_ememyReward}; You: {printItem "icon_HP"} {print member_player_HP}, {printItem "icon_ATK"} {print member_player_ATK}, {printItem "icon_DEF"} {print member_player_DEF}, {printItem "icon_money"} {print member_player_money};
+{print arg_calculateBattle_ememyName}: {printItem "icon_HP"} {print arg_calculateBattle_ememyHP}, {printItem "icon_ATK"} {print arg_calculateBattle_ememyATK}, {printItem "icon_DEF"} {print arg_calculateBattle_ememyDEF}, {printItem "icon_money"} {print arg_calculateBattle_ememyReward};
+You: {printItem "icon_HP"} {print member_player_HP}, {printItem "icon_ATK"} {print member_player_ATK}, {printItem "icon_DEF"} {print member_player_DEF}, {printItem "icon_money"} {print member_player_money};
 {let_calculateBattle_playerDamagePerTurn = member_player_ATK - arg_calculateBattle_ememyDEF}
 {let_calculateBattle_ememyDamagePerTurn = arg_calculateBattle_ememyATK - member_player_DEF}
 {
   - let_calculateBattle_playerDamagePerTurn > 0 ?
-    (js "variableMap['let_calculateBattle_playerWinTurn'] = Math.floor(variableMap['member_player_HP'] / variableMap['let_calculateBattle_ememyDamagePerTurn'])")
+    {arg_calculateBattle_ememyHP = arg_calculateBattle_ememyHP - let_calculateBattle_playerDamagePerTurn}
+    {let_calculateBattle_playerWinTurn = arg_calculateBattle_ememyHP / let_calculateBattle_playerDamagePerTurn}
   - else
-    {let_calculateBattle_playerWinTurn = -1}
-}
-{
+    {let_calculateBattle_playerDamagePerTurn = 0}
+    {let_calculateBattle_playerWinTurn = 10000}
+}{
   - let_calculateBattle_ememyDamagePerTurn > 0 ?
-    (js "variableMap['let_calculateBattle_ememyWinTurn'] = Math.floor(variableMap['arg_calculateBattle_ememyHP'] / variableMap['let_calculateBattle_playerDamagePerTurn'])")
+    {let_calculateBattle_ememyWinTurn = member_player_HP / let_calculateBattle_ememyDamagePerTurn}
   - else
-    {let_calculateBattle_ememyWinTurn = -1}
-}
-{
+    {let_calculateBattle_ememyDamagePerTurn = 0}
+    {let_calculateBattle_ememyWinTurn = 10000}
+}{
   - let_calculateBattle_ememyWinTurn > let_calculateBattle_playerWinTurn ?
     {arg_checkComfirmBattle_comfirmed = -1}
     {var_calculateBattle_playerCostHP = let_calculateBattle_playerWinTurn * let_calculateBattle_ememyDamagePerTurn}
-    The battle will cost {print var_calculateBattle_playerCostHP} {printItem "icon_HP"}. {choice
+    {let_calculateBattle_playerWinTurn = let_calculateBattle_playerWinTurn + 1}
+    The battle will cost {print var_calculateBattle_playerCostHP} {printItem "icon_HP"} in {print let_calculateBattle_playerWinTurn} turn(s). {choice
       - Yes
         {arg_checkComfirmBattle_comfirmed = 1}
       - No
         {arg_checkComfirmBattle_comfirmed = 0}
-    }(jumpNow "fun_afterBattle")
+    }(jump "fun_afterBattle")
   - else
     {arg_checkComfirmBattle_comfirmed = 0}
     You will not win.
 }
 """
-NAME f_calculateBattle
+NAME fun_calculateBattle
 
 DLG fun_afterBattle
 """
 {
   - arg_checkComfirmBattle_comfirmed == 1 ?
     {member_player_HP = member_player_HP - var_calculateBattle_playerCostHP}
+    {member_player_money = member_player_money + arg_calculateBattle_ememyReward}
     After battle, you: {printItem "icon_HP"} {print member_player_HP}, {printItem "icon_money"} {print member_player_money}
-    (js "let targetId = variableMap['pointer_currentEmenySprId']; bitsy.sprite[].x = 0; bitsy.sprite[targetId].y = 0; bitsy.sprite[targetId].room = 'default';")
   - else
     You choose not fight.
 }
 """
-NAME f_afterBattle
+NAME fun_afterBattle
 
 DLG fun_slime_intoBattle
 """
@@ -213,9 +240,10 @@ DLG fun_slime_intoBattle
 {arg_calculateBattle_ememyDEF = prototype_slime_DEF}
 {arg_calculateBattle_ememyHP = prototype_slime_HP}
 {arg_calculateBattle_ememyReward = prototype_slime_Reward}
-Slime: (jumpNow "fun_calculateBattle")
+{arg_calculateBattle_ememyName = "Slime"}
+(jump "fun_calculateBattle")
 """
-NAME f_slime_intoBattle
+NAME fun_slime_intoBattle
 
 
 VAR prototype_slime_ATK
@@ -230,11 +258,32 @@ VAR prototype_slime_HP
 VAR prototype_slime_Reward
 1
 
-VAR member_player_ATK
+VAR prototype_slime_ATK
 2
 
-VAR member_player_DEF
+VAR prototype_slime_DEF
 1
+
+VAR prototype_slime_HP
+20
+
+VAR prototype_slime_Reward
+1
+
+VAR prototype_healBottle_amount
+10
+
+VAR prototype_ATKGem_amount
+3
+
+VAR prototype_DEFGem_amount
+3
+
+VAR member_player_ATK
+3
+
+VAR member_player_DEF
+3
 
 VAR member_player_HP
 15
@@ -266,6 +315,9 @@ VAR pointer_currentEmenySprId
 VAR arg_calculateBattle_ememyReward
 -1
 
+VAR arg_calculateBattle_ememyName
+[default-text]
+
 VAR var_calculateBattle_playerCostHP
 -1
 
@@ -282,4 +334,7 @@ VAR let_calculateBattle_ememyWinTurn
 -1
 
 VAR arg_checkComfirmBattle_comfirmed
+-1
+
+VAR let_enhance_before
 -1
