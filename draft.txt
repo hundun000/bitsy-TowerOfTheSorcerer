@@ -98,125 +98,71 @@ NAME cat
 DLG dlg_slime_1_5_5_intoBattle_part1
 POS floor_1 5,5
 
-ITM itm_char_0
-001110
-010001
-010011
-010101
-011001
-010001
-001110
-000000
-NAME char_0
+ITM icon_HP
+00000000
+11100111
+11111111
+01111110
+00111100
+00011000
+00000000
+00000000
+NAME HP
 
-ITM itm_char_1
-000100
-001100
-000100
-000100
-000100
-000100
-001110
-000000
-NAME char_1
+ITM icon_ATK
+00000000
+00001000
+00011000
+00101000
+00101000
+00101000
+01111100
+00010000
+NAME ATK
 
-ITM itm_char_2
-001110
-010001
-000001
-000110
-001000
-010000
-011111
-000000
-NAME char_2
+ITM icon_DEF
+00000000
+01111110
+01000010
+01000010
+01000010
+00100100
+00011000
+00000000
+NAME DEF
 
-ITM itm_char_3
-001110
-010001
-000001
-001110
-000001
-010001
-001110
-000000
-NAME char_3
+ITM icon_slime
+00000000
+00000000
+01010001
+01110001
+01110010
+01111100
+00111100
+00100100
+NAME slime
 
-ITM itm_char_4
-000010
-000110
-001010
-010010
-011111
-000010
-000010
-000000
-NAME char_4
-
-ITM itm_char_5
-011111
-010000
-010000
-011110
-000001
-010001
-001110
-000000
-NAME char_5
-
-ITM itm_char_6
-000110
-001000
-010000
-011110
-010001
-010001
-001110
-000000
-NAME char_6
-
-ITM itm_char_7
-011111
-000001
-000010
-000100
-001000
-001000
-001000
-000000
-NAME char_7
-
-ITM itm_char_8
-001110
-010001
-010001
-001110
-010001
-010001
-001110
-000000
-NAME char_8
-
-ITM itm_char_9
-001110
-010001
-010001
-001111
-000001
-000010
-001100
-000000
-
+ITM icon_money
+00111100
+01000010
+10011001
+10100101
+10100101
+10011001
+01000010
+00111100
+NAME money
 
 DLG dlg_slime_1_5_5_intoBattle_part1
 """
-{pointer_currentEmenyId = spr_slime_1_5_5}
-This is slime_1_5_5.(jumpNow "fun_slime_intoBattle")
+{pointer_currentEmenySprId = spr_slime_1_5_5}
+(jumpNow "fun_slime_intoBattle")
 """
 NAME dlg_slime_1_5_5_intoBattle_part1
 
 DLG fun_calculateBattle
 """
+{printItem "icon_HP"} {print arg_calculateBattle_ememyHP}, {printItem "icon_ATK"} {print arg_calculateBattle_ememyATK}, {printItem "icon_DEF"} {print arg_calculateBattle_ememyDEF}, {printItem "icon_money"} {print arg_calculateBattle_ememyReward}; You: {printItem "icon_HP"} {print member_player_HP}, {printItem "icon_ATK"} {print member_player_ATK}, {printItem "icon_DEF"} {print member_player_DEF}, {printItem "icon_money"} {print member_player_money};
 {let_calculateBattle_playerDamagePerTurn = member_player_ATK - arg_calculateBattle_ememyDEF}
 {let_calculateBattle_ememyDamagePerTurn = arg_calculateBattle_ememyATK - member_player_DEF}
 {
@@ -235,7 +181,12 @@ DLG fun_calculateBattle
   - let_calculateBattle_ememyWinTurn > let_calculateBattle_playerWinTurn ?
     {arg_checkComfirmBattle_comfirmed = -1}
     {var_calculateBattle_playerCostHP = let_calculateBattle_playerWinTurn * let_calculateBattle_ememyDamagePerTurn}
-    The fight will cost {print var_calculateBattle_playerCostHP} HP and gain {print arg_calculateBattle_ememyReward} money.(jumpNow "fun_askBattle")
+    The battle will cost {print var_calculateBattle_playerCostHP} {printItem "icon_HP"}. {choice
+      - Yes
+        {arg_checkComfirmBattle_comfirmed = 1}
+      - No
+        {arg_checkComfirmBattle_comfirmed = 0}
+    }(jumpNow "fun_afterBattle")
   - else
     {arg_checkComfirmBattle_comfirmed = 0}
     You will not win.
@@ -243,34 +194,13 @@ DLG fun_calculateBattle
 """
 NAME f_calculateBattle
 
-DLG fun_askBattle
-"""
-Do you want to fight?{choice
-  - Yes
-    {arg_checkComfirmBattle_comfirmed = 1}
-  - No
-    {arg_checkComfirmBattle_comfirmed = 0}
-}(jumpNow "fun_afterBattle")
-"""
-NAME f_askBattle
-
-DLG fun_updateInfo
-"""
-(js "variableMap['member_info_HP_0'] = variableMap['member_player_HP'] - Math.floor(variableMap['member_player_HP'] / 10) * 10")
-(js "variableMap['member_info_HP_1'] = (variableMap['member_player_HP'] - Math.floor(Math.floor(variableMap['member_player_HP'] / 100) * 100) / 10)")
-(js "variableMap['member_info_HP_2'] = (variableMap['member_player_HP'] - Math.floor(Math.floor(variableMap['member_player_HP'] / 1000) * 1000) / 100)")
-Info {print member_info_HP_2} {print member_info_HP_1} {print member_info_HP_0}
-(image "SPR, spr_fieldSlot_0, spr_fieldSlot_empty")
-"""
-NAME f_updateInfo
-
 DLG fun_afterBattle
 """
 {
   - arg_checkComfirmBattle_comfirmed == 1 ?
     {member_player_HP = member_player_HP - var_calculateBattle_playerCostHP}
-    Current HP is {print member_player_HP}(jumpNow "fun_updateInfo")
-    (js "let targetId = variableMap['pointer_currentEmenyId']; bitsy.sprite[].x = 0; bitsy.sprite[targetId].y = 0; bitsy.sprite[targetId].room = 'default';")
+    After battle, you: {printItem "icon_HP"} {print member_player_HP}, {printItem "icon_money"} {print member_player_money}
+    (js "let targetId = variableMap['pointer_currentEmenySprId']; bitsy.sprite[].x = 0; bitsy.sprite[targetId].y = 0; bitsy.sprite[targetId].room = 'default';")
   - else
     You choose not fight.
 }
@@ -283,7 +213,7 @@ DLG fun_slime_intoBattle
 {arg_calculateBattle_ememyDEF = prototype_slime_DEF}
 {arg_calculateBattle_ememyHP = prototype_slime_HP}
 {arg_calculateBattle_ememyReward = prototype_slime_Reward}
-(jumpNow "fun_calculateBattle")
+Slime: (jumpNow "fun_calculateBattle")
 """
 NAME f_slime_intoBattle
 
@@ -309,6 +239,9 @@ VAR member_player_DEF
 VAR member_player_HP
 15
 
+VAR member_player_money
+0
+
 VAR member_info_HP_0
 -1
 
@@ -327,7 +260,7 @@ VAR arg_calculateBattle_ememyDEF
 VAR arg_calculateBattle_ememyHP
 -1
 
-VAR pointer_currentEmenyId
+VAR pointer_currentEmenySprId
 -1
 
 VAR arg_calculateBattle_ememyReward
