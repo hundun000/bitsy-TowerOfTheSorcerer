@@ -11,7 +11,7 @@ NAME blueprint
 255,255,255
 
 ROOM floor_1
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,t_info_HP_2,t_info_HP_1,t_info_HP_0
 0,a,a,a,a,a,a,a,a,a,a,a,a,a,a,0
 0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
 0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
@@ -41,6 +41,39 @@ TIL a
 11111111
 NAME block
 
+TIL til_info_HP_0 
+00000000
+00010000
+00001000
+01010100
+00101010
+00010000
+00001000
+00000000
+NAME t_info_HP_0
+
+TIL til_info_HP_1 
+00000000
+00010000
+00001000
+01010100
+00101010
+00010000
+00001000
+00000000
+NAME t_info_HP_1
+
+TIL til_info_HP_2
+00000000
+00010000
+00001000
+01010100
+00101010
+00010000
+00001000
+00000000
+NAME t_info_HP_2
+
 SPR A
 00011000
 00011000
@@ -65,20 +98,122 @@ NAME cat
 DLG dlg_slime_1_5_5_intoBattle_part1
 POS floor_1 5,5
 
+ITM itm_char_0
+001110
+010001
+010011
+010101
+011001
+010001
+001110
+000000
+NAME char_0
+
+ITM itm_char_1
+000100
+001100
+000100
+000100
+000100
+000100
+001110
+000000
+NAME char_1
+
+ITM itm_char_2
+001110
+010001
+000001
+000110
+001000
+010000
+011111
+000000
+NAME char_2
+
+ITM itm_char_3
+001110
+010001
+000001
+001110
+000001
+010001
+001110
+000000
+NAME char_3
+
+ITM itm_char_4
+000010
+000110
+001010
+010010
+011111
+000010
+000010
+000000
+NAME char_4
+
+ITM itm_char_5
+011111
+010000
+010000
+011110
+000001
+010001
+001110
+000000
+NAME char_5
+
+ITM itm_char_6
+000110
+001000
+010000
+011110
+010001
+010001
+001110
+000000
+NAME char_6
+
+ITM itm_char_7
+011111
+000001
+000010
+000100
+001000
+001000
+001000
+000000
+NAME char_7
+
+ITM itm_char_8
+001110
+010001
+010001
+001110
+010001
+010001
+001110
+000000
+NAME char_8
+
+ITM itm_char_9
+001110
+010001
+010001
+001111
+000001
+000010
+001100
+000000
+
+
 DLG dlg_slime_1_5_5_intoBattle_part1
 """
-This is slime_1_5_5.(jumpNow "fun_slime_intoBattle")(jump "dlg_slime_1_5_5_intoBattle_part2")
+{pointer_currentEmenyId = spr_slime_1_5_5}
+This is slime_1_5_5.(jumpNow "fun_slime_intoBattle")
 """
 NAME dlg_slime_1_5_5_intoBattle_part1
-
-DLG dlg_slime_1_5_5_intoBattle_part2
-"""
-{
-  - arg_checkComfirmBattle_comfirmed == 1 ?
-    {eraseAll "SPR, spr_slime_1_5_5, floor_1"}
-}
-"""
-NAME d_slime_1_5_5_intoBattle_part2
 
 DLG fun_calculateBattle
 """
@@ -86,13 +221,13 @@ DLG fun_calculateBattle
 {let_calculateBattle_ememyDamagePerTurn = arg_calculateBattle_ememyATK - member_player_DEF}
 {
   - let_calculateBattle_playerDamagePerTurn > 0 ?
-    {let_calculateBattle_playerWinTurn = arg_calculateBattle_ememyHP / let_calculateBattle_playerDamagePerTurn}
+    (js "variableMap['let_calculateBattle_playerWinTurn'] = Math.floor(variableMap['member_player_HP'] / variableMap['let_calculateBattle_ememyDamagePerTurn'])")
   - else
     {let_calculateBattle_playerWinTurn = -1}
 }
 {
   - let_calculateBattle_ememyDamagePerTurn > 0 ?
-    {let_calculateBattle_ememyWinTurn = member_player_HP / let_calculateBattle_ememyDamagePerTurn}
+    (js "variableMap['let_calculateBattle_ememyWinTurn'] = Math.floor(variableMap['arg_calculateBattle_ememyHP'] / variableMap['let_calculateBattle_playerDamagePerTurn'])")
   - else
     {let_calculateBattle_ememyWinTurn = -1}
 }
@@ -100,8 +235,7 @@ DLG fun_calculateBattle
   - let_calculateBattle_ememyWinTurn > let_calculateBattle_playerWinTurn ?
     {arg_checkComfirmBattle_comfirmed = -1}
     {var_calculateBattle_playerCostHP = let_calculateBattle_playerWinTurn * let_calculateBattle_ememyDamagePerTurn}
-    The fight will cost {print var_calculateBattle_playerCostHP} HP and gain {print arg_calculateBattle_ememyReward} money.
-    (jumpNow "fun_askBattle")
+    The fight will cost {print var_calculateBattle_playerCostHP} HP and gain {print arg_calculateBattle_ememyReward} money.(jumpNow "fun_askBattle")
   - else
     {arg_checkComfirmBattle_comfirmed = 0}
     You will not win.
@@ -120,12 +254,23 @@ Do you want to fight?{choice
 """
 NAME f_askBattle
 
+DLG fun_updateInfo
+"""
+(js "variableMap['member_info_HP_0'] = variableMap['member_player_HP'] - Math.floor(variableMap['member_player_HP'] / 10) * 10")
+(js "variableMap['member_info_HP_1'] = (variableMap['member_player_HP'] - Math.floor(Math.floor(variableMap['member_player_HP'] / 100) * 100) / 10)")
+(js "variableMap['member_info_HP_2'] = (variableMap['member_player_HP'] - Math.floor(Math.floor(variableMap['member_player_HP'] / 1000) * 1000) / 100)")
+Info {print member_info_HP_2} {print member_info_HP_1} {print member_info_HP_0}
+(image "SPR, spr_fieldSlot_0, spr_fieldSlot_empty")
+"""
+NAME f_updateInfo
+
 DLG fun_afterBattle
 """
 {
   - arg_checkComfirmBattle_comfirmed == 1 ?
     {member_player_HP = member_player_HP - var_calculateBattle_playerCostHP}
-    Current HP is {print member_player_HP}
+    Current HP is {print member_player_HP}(jumpNow "fun_updateInfo")
+    (js "let targetId = variableMap['pointer_currentEmenyId']; bitsy.sprite[].x = 0; bitsy.sprite[targetId].y = 0; bitsy.sprite[targetId].room = 'default';")
   - else
     You choose not fight.
 }
@@ -164,6 +309,15 @@ VAR member_player_DEF
 VAR member_player_HP
 15
 
+VAR member_info_HP_0
+-1
+
+VAR member_info_HP_1
+-1
+
+VAR member_info_HP_2
+-1
+
 VAR arg_calculateBattle_ememyATK
 -1
 
@@ -171,6 +325,9 @@ VAR arg_calculateBattle_ememyDEF
 -1
 
 VAR arg_calculateBattle_ememyHP
+-1
+
+VAR pointer_currentEmenyId
 -1
 
 VAR arg_calculateBattle_ememyReward
