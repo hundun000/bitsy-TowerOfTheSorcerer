@@ -1,0 +1,195 @@
+Write your game's title here
+
+# BITSY VERSION 7.12
+
+! ROOM_FORMAT 1
+
+PAL 0
+NAME blueprint
+0,82,204
+128,159,255
+255,255,255
+
+ROOM floor_1
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,a,a,a,a,a,a,a,a,a,a,a,a,a,a,0
+0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
+0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
+0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
+0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
+0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
+0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
+0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
+0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
+0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
+0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
+0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
+0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
+0,a,a,a,a,a,a,a,a,a,a,a,a,a,a,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+NAME example room
+PAL 0
+
+TIL a
+11111111
+10000001
+10000001
+10011001
+10011001
+10000001
+10000001
+11111111
+NAME block
+
+SPR A
+00011000
+00011000
+00011000
+00111100
+01111110
+10111101
+00100100
+00100100
+POS floor_1 4,4
+
+SPR spr_slime_1_5_5
+00000000
+00000000
+01010001
+01110001
+01110010
+01111100
+00111100
+00100100
+NAME cat
+DLG dlg_slime_1_5_5_intoBattle_part1
+POS floor_1 5,5
+
+DLG dlg_slime_1_5_5_intoBattle_part1
+"""
+This is slime_1_5_5.(jumpNow "fun_slime_intoBattle")(jump "dlg_slime_1_5_5_intoBattle_part2")
+"""
+NAME dlg_slime_1_5_5_intoBattle_part1
+
+DLG dlg_slime_1_5_5_intoBattle_part2
+"""
+{
+  - arg_checkComfirmBattle_comfirmed == 1 ?
+    {eraseAll "SPR, spr_slime_1_5_5, floor_1"}
+}
+"""
+NAME d_slime_1_5_5_intoBattle_part2
+
+DLG fun_calculateBattle
+"""
+{let_calculateBattle_playerDamagePerTurn = member_player_ATK - arg_calculateBattle_ememyDEF}
+{let_calculateBattle_ememyDamagePerTurn = arg_calculateBattle_ememyATK - member_player_DEF}
+{
+  - let_calculateBattle_playerDamagePerTurn > 0 ?
+    {let_calculateBattle_playerWinTurn = arg_calculateBattle_ememyHP / let_calculateBattle_playerDamagePerTurn}
+  - else
+    {let_calculateBattle_playerWinTurn = -1}
+}
+{
+  - let_calculateBattle_ememyDamagePerTurn > 0 ?
+    {let_calculateBattle_ememyWinTurn = member_player_HP / let_calculateBattle_ememyDamagePerTurn}
+  - else
+    {let_calculateBattle_ememyWinTurn = -1}
+}
+{
+  - let_calculateBattle_ememyWinTurn > let_calculateBattle_playerWinTurn ?
+    {arg_checkComfirmBattle_comfirmed = -1}
+    {var_calculateBattle_playerCostHP = let_calculateBattle_playerWinTurn * let_calculateBattle_ememyDamagePerTurn}
+    The fight will cost {print var_calculateBattle_playerCostHP} HP and gain {print arg_calculateBattle_ememyReward} money.
+    (jumpNow "fun_askBattle")
+  - else
+    {arg_checkComfirmBattle_comfirmed = 0}
+    You will not win.
+}
+"""
+NAME f_calculateBattle
+
+DLG fun_askBattle
+"""
+Do you want to fight?{choice
+  - Yes
+    {arg_checkComfirmBattle_comfirmed = 1}
+  - No
+    {arg_checkComfirmBattle_comfirmed = 0}
+}(jumpNow "fun_afterBattle")
+"""
+NAME f_askBattle
+
+DLG fun_afterBattle
+"""
+{
+  - arg_checkComfirmBattle_comfirmed == 1 ?
+    {member_player_HP = member_player_HP - var_calculateBattle_playerCostHP}
+    Current HP is {print member_player_HP}
+  - else
+    You choose not fight.
+}
+"""
+NAME f_afterBattle
+
+DLG fun_slime_intoBattle
+"""
+{arg_calculateBattle_ememyATK = prototype_slime_ATK}
+{arg_calculateBattle_ememyDEF = prototype_slime_DEF}
+{arg_calculateBattle_ememyHP = prototype_slime_HP}
+{arg_calculateBattle_ememyReward = prototype_slime_Reward}
+(jumpNow "fun_calculateBattle")
+"""
+NAME f_slime_intoBattle
+
+
+VAR prototype_slime_ATK
+2
+
+VAR prototype_slime_DEF
+1
+
+VAR prototype_slime_HP
+10
+
+VAR prototype_slime_Reward
+1
+
+VAR member_player_ATK
+2
+
+VAR member_player_DEF
+1
+
+VAR member_player_HP
+15
+
+VAR arg_calculateBattle_ememyATK
+-1
+
+VAR arg_calculateBattle_ememyDEF
+-1
+
+VAR arg_calculateBattle_ememyHP
+-1
+
+VAR arg_calculateBattle_ememyReward
+-1
+
+VAR var_calculateBattle_playerCostHP
+-1
+
+VAR let_calculateBattle_playerDamagePerTurn
+-1
+
+VAR let_calculateBattle_ememyDamagePerTurn
+-1
+
+VAR let_calculateBattle_playerWinTurn
+-1
+
+VAR let_calculateBattle_ememyWinTurn
+-1
+
+VAR arg_checkComfirmBattle_comfirmed
+-1
