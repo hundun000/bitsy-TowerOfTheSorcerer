@@ -1,4 +1,4 @@
-Write your game's title here
+Bitsy Tower
 
 # BITSY VERSION 7.12
 
@@ -12,22 +12,26 @@ NAME blueprint
 
 ROOM floor_1
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 0,a,a,a,a,a,a,a,a,a,a,a,a,a,a,0
-0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
-0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
-0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
-0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
-0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
-0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
-0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
-0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
-0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
-0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
-0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
+0,a,0,0,0,0,a,0,0,0,0,a,0,b,a,0
+0,a,0,0,0,0,a,0,0,0,0,a,0,0,a,0
+0,a,0,0,0,0,a,0,a,a,a,a,0,0,a,0
 0,a,0,0,0,0,0,0,0,0,0,0,0,0,a,0
 0,a,a,a,a,a,a,a,a,a,a,a,a,a,a,0
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 NAME example room
+ITM item_healBottle 8,8
+ITM item_ATKGem 9,8
+ITM item_DEFGem 10,8
+END dlg_end 13,7
 PAL 0
 
 TIL a
@@ -40,6 +44,17 @@ TIL a
 10000001
 11111111
 NAME block
+WAL true
+
+TIL b
+00000000
+00001111
+00001001
+00111001
+00100001
+11100001
+10000001
+11111111
 
 SPR A
 00011000
@@ -49,21 +64,63 @@ SPR A
 01111110
 10111101
 00100100
-00100100
-POS floor_1 4,4
-
-SPR spr_slime_1_5_5
-00000000
-00000000
-01010001
-01110001
-01110010
-01111100
+01101100
+>
+00011000
+00011000
+00011000
 00111100
+01111110
+10111101
 00100100
-NAME spr_slime_1_5_5
-DLG dlg_slime_1_5_5_intoBattle_part1
-POS floor_1 5,5
+00110110
+POS floor_1 3,8
+
+SPR spr_slime_00
+00000000
+00000000
+00111000
+01000100
+10000010
+10101010
+10000010
+01111100
+>
+00000000
+00000000
+00011100
+00100010
+01000001
+01010101
+01000001
+00111110
+NAME spr_slime_00
+DLG dlg_slime_00_intoBattle_part1
+POS floor_1 7,9
+
+SPR spr_slimeBig_00
+00111100
+01000010
+10000001
+10100101
+10100101
+10000001
+10000001
+01111110
+>
+00000000
+00111100
+01000010
+10000001
+10100101
+10100101
+10000001
+01111110
+NAME spr_slimeBig_00
+DLG dlg_slimeBig_00_intoBattle_part1
+POS floor_1 11,10
+
+
 
 ITM icon_HP
 00000000
@@ -161,28 +218,43 @@ Enhance: {printItem "icon_ATK"} {print let_enhance_before} -> {print member_play
 """
 NAME ATKGem
 
-DLG item_DEFGem
+DLG dlg_DEFGem
 """
-{let_enhance_before = member_player_ATK}
-{member_player_ATK = member_player_ATK + prototype_ATKGem_amount}
-Enhance: {printItem "icon_ATK"} {print let_enhance_before} -> {print member_player_ATK}
+{let_enhance_before = member_player_DEF}
+{member_player_DEF = member_player_DEF + prototype_DEFGem_amount}
+Enhance: {printItem "icon_DEF"} {print let_enhance_before} -> {print member_player_DEF}
 """
-NAME item_DEFGem
+NAME dlg_DEFGem
 
-DLG dlg_slime_1_5_5_intoBattle_part1
+DLG dlg_slime_00_intoBattle_part1
 """
-(jumpNow "fun_slime_intoBattle")(jump "dlg_slime_1_5_5_intoBattle_part2")
+(jumpNow "fun_slime_intoBattle")(jump "dlg_slime_00_intoBattle_part2")
 """
-NAME dlg_slime_1_5_5_intoBattle_part1
+NAME dlg_slime_00_intoBattle_part1
 
-DLG dlg_slime_1_5_5_intoBattle_part2
+DLG dlg_slime_00_intoBattle_part2
 """
 {
   - arg_checkComfirmBattle_comfirmed == 1 ?
-    {eraseAll "SPR, spr_slime_1_5_5, floor_1"}
+    {eraseAll "SPR, spr_slime_00, floor_1"}
 }
 """
-NAME dlg_slime_1_5_5_intoBattle_part2
+NAME dlg_slime_00_intoBattle_part2
+
+DLG dlg_slimeBig_00_intoBattle_part1
+"""
+(jumpNow "fun_slimeBig_intoBattle")(jump "dlg_slimeBig_00_intoBattle_part2")
+"""
+NAME dlg_slimeBig_00_intoBattle_part1
+
+DLG dlg_slimeBig_00_intoBattle_part2
+"""
+{
+  - arg_checkComfirmBattle_comfirmed == 1 ?
+    {eraseAll "SPR, spr_slimeBig_00, floor_1"}
+}
+"""
+NAME dlg_slime_00_intoBattle_part2
 
 DLG fun_calculateBattle
 """
@@ -207,8 +279,7 @@ You: {printItem "icon_HP"} {print member_player_HP}, {printItem "icon_ATK"} {pri
   - let_calculateBattle_ememyWinTurn > let_calculateBattle_playerWinTurn ?
     {arg_checkComfirmBattle_comfirmed = -1}
     {var_calculateBattle_playerCostHP = let_calculateBattle_playerWinTurn * let_calculateBattle_ememyDamagePerTurn}
-    {let_calculateBattle_playerWinTurn = let_calculateBattle_playerWinTurn + 1}
-    The battle will cost {print var_calculateBattle_playerCostHP} {printItem "icon_HP"} in {print let_calculateBattle_playerWinTurn} turn(s). {choice
+    The battle will cost {print var_calculateBattle_playerCostHP} {printItem "icon_HP"}. {choice
       - Yes
         {arg_checkComfirmBattle_comfirmed = 1}
       - No
@@ -245,6 +316,20 @@ DLG fun_slime_intoBattle
 """
 NAME fun_slime_intoBattle
 
+DLG fun_slimeBig_intoBattle
+"""
+{arg_calculateBattle_ememyATK = prototype_slimeBig_ATK}
+{arg_calculateBattle_ememyDEF = prototype_slimeBig_DEF}
+{arg_calculateBattle_ememyHP = prototype_slimeBig_HP}
+{arg_calculateBattle_ememyReward = prototype_slimeBig_Reward}
+{arg_calculateBattle_ememyName = "Big Slime"}
+(jump "fun_calculateBattle")
+"""
+NAME fun_slimeBig_intoBattle
+
+DLG dlg_end
+The demo is end. 
+NAME dlg_end
 
 VAR prototype_slime_ATK
 2
@@ -258,17 +343,17 @@ VAR prototype_slime_HP
 VAR prototype_slime_Reward
 1
 
-VAR prototype_slime_ATK
+VAR prototype_slimeBig_ATK
+5
+
+VAR prototype_slimeBig_DEF
 2
 
-VAR prototype_slime_DEF
-1
-
-VAR prototype_slime_HP
+VAR prototype_slimeBig_HP
 20
 
-VAR prototype_slime_Reward
-1
+VAR prototype_slimeBig_Reward
+2
 
 VAR prototype_healBottle_amount
 10
@@ -283,10 +368,10 @@ VAR member_player_ATK
 3
 
 VAR member_player_DEF
-3
+1
 
 VAR member_player_HP
-15
+20
 
 VAR member_player_money
 0
