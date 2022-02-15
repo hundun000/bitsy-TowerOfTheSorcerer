@@ -1,4 +1,4 @@
-This project created in [itch.io - Low Effort Jam 19](https://hundun.itch.io/bitsy-tower) without theme.
+This project created in [itch.io - Low Effort Jam 19](https://itch.io/jam/low-effort-jam-19/rate/1401224) without theme.
 
 ## Bitsy Tower
 
@@ -8,7 +8,7 @@ Remake of a classic game, Tower of the Sorcerer. Use engine bitsy. This is a dem
 
 ### release
 
-The single `.html` file.
+The single `.html` file. [Online play](https://hundun.itch.io/bitsy-tower)
 
 ### How to play
 
